@@ -23,6 +23,8 @@ int main()
     write_pgm(data, SZ, SZ, "input.pgm");
     write_pgm(filtered, SZ, SZ, "filtered.pgm");
     
+    puts("Input written to input.pgm, output to filtered.pgm");
+    
     delete filtered;
     delete data;
     return 0;       
