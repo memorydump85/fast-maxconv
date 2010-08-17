@@ -45,6 +45,7 @@ static void convolveCenteredDisc2DMax(int a[], int width, int height, int radius
 int main()
 {
     const int SZ = 800;
+    const int SAMPLES = 500;
     int* data = new int[SZ*SZ];
     int* filtered = new int[SZ*SZ];
 
@@ -56,29 +57,27 @@ int main()
 
     ParallelMaxConvolve pmc(DISC_KERNEL);
     double sum_fast = 0;
-    for (int i=0; i<30; ++i) {
+    for (int i=0; i<SAMPLES; ++i) {
         TicToc tic;
         pmc.convolve(data, SZ, SZ, filtered);
         sum_fast += tic.toc();
         
-        putc('.', stderr);
-        fflush(stderr);
+//        putc('.', stderr);
+//        fflush(stderr);
     }  
     
-    printf("\nFast: %fs\n", sum_fast/30);
-
 
     double sum_triv = 0;
-    for (int i=0; i<30; ++i) {
+    for (int i=0; i<SAMPLES; ++i) {
         TicToc tic;
                 convolveCenteredDisc2DMax(data, SZ, SZ, KERNEL_SIZE, filtered);
         sum_triv += tic.toc();
 
-        putc('.', stderr);
-        fflush(stderr);
+//        putc('.', stderr);
+//        fflush(stderr);
     }
     
-    printf("\nTriv: %fs\n", sum_triv/30);
+    printf("%d %d %.4f %.4f\n", CBINS, KERNEL_SIZE, sum_fast/SAMPLES, sum_triv/SAMPLES);
  
     delete filtered;
     delete data;
