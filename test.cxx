@@ -5,6 +5,12 @@
 
 
 
+#ifndef DISC_KERNEL
+    #define DISC_KERNEL DISC_KERNEL_7
+#endif
+
+
+
 int main()
 {
     const int SZ = 800;
@@ -17,7 +23,7 @@ int main()
     } 
 
 
-    ParallelMaxConvolve pmc;       
+    ParallelMaxConvolve pmc(DISC_KERNEL);
     pmc.convolve(data, SZ, SZ, filtered);
     
     write_pgm(data, SZ, SZ, "input.pgm");

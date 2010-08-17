@@ -9,6 +9,7 @@
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
+#include <cstdarg>
 #include <algorithm>
 #include <time.h>
 
@@ -115,15 +116,22 @@ class ParallelMaxConvolve
 //  (width=15px, height=15px).
 {
 public:
-    ParallelMaxConvolve()
-        : m_barrierReady(6),
-          m_barrierDone(6),
-          m_thread1(&maxconv_rect, this,  5, 15),
-          m_thread2(&maxconv_rect, this,  9, 13),
-          m_thread3(&maxconv_rect, this, 11, 11),
-          m_thread4(&maxconv_rect, this, 13,  9),
-          m_thread5(&maxconv_rect, this, 15,  5)
-    {}
+    ParallelMaxConvolve(int cRects, ...)
+        : m_barrierReady(cRects+1),
+          m_barrierDone(cRects+1)
+    {
+        va_list vl;
+        va_start(vl, cRects);
+        
+        for (int i=0; i<cRects; ++i) {
+            int w = va_arg(vl, int);
+            int h = va_arg(vl, int);
+            
+            m_threadGroup.add_thread(new boost::thread(&maxconv_rect, this, w, h));
+        }
+        
+        va_end(vl);
+    }
     
     void convolve(int input[], int width, int height, int output[])
     {       
@@ -142,17 +150,8 @@ public:
     
     ~ParallelMaxConvolve()
     {
-        m_thread1.interrupt();
-        m_thread2.interrupt();
-        m_thread3.interrupt();
-        m_thread4.interrupt();
-        m_thread5.interrupt();
-        
-        m_thread1.join();
-        m_thread2.join();
-        m_thread3.join();
-        m_thread4.join();
-        m_thread5.join();
+        m_threadGroup.interrupt_all();
+        m_threadGroup.join_all();
     }
     
 private:
@@ -171,11 +170,7 @@ private:
     boost::barrier m_barrierReady;    
     boost::barrier m_barrierDone;
 
-    boost::thread m_thread1;
-    boost::thread m_thread2;
-    boost::thread m_thread3;
-    boost::thread m_thread4;
-    boost::thread m_thread5;
+    boost::thread_group m_threadGroup;
 
     int *m_in;
     int m_width;
@@ -183,3 +178,10 @@ private:
     int *m_out;
 };
 
+#define DISC_KERNEL_1   2,   1, 3,   3, 1
+#define DISC_KERNEL_2   2,   3, 5,   5, 3
+#define DISC_KERNEL_3   3,   3, 7,   5, 5,   7, 3
+#define DISC_KERNEL_4   3,   3, 9,   7, 7,   9, 3
+#define DISC_KERNEL_5   4,   5,11,   7, 9,   9, 7,   11, 5
+#define DISC_KERNEL_6   5,   5,13,   7,11,   9, 9,   11, 7,   13, 5
+#define DISC_KERNEL_7   5,   5,15,   9,13,  11,11,   13, 9,   15, 5

@@ -5,6 +5,16 @@
 
 
 
+#ifndef KERNEL_SIZE
+    #define KERNEL_SIZE 7
+#endif
+
+#ifndef DISC_KERNEL
+    #define DISC_KERNEL DISC_KERNEL_7
+#endif
+
+
+
 static void convolveCenteredDisc2DMax(int a[], int width, int height, int radius, int r[])
 {
     for (int k=-radius; k <= radius; k++) {
@@ -44,7 +54,7 @@ int main()
     } 
 
 
-    ParallelMaxConvolve pmc;       
+    ParallelMaxConvolve pmc(DISC_KERNEL);
     double sum_fast = 0;
     for (int i=0; i<30; ++i) {
         TicToc tic;
@@ -61,7 +71,7 @@ int main()
     double sum_triv = 0;
     for (int i=0; i<30; ++i) {
         TicToc tic;
-                convolveCenteredDisc2DMax(data, SZ, SZ, 7, filtered);
+                convolveCenteredDisc2DMax(data, SZ, SZ, KERNEL_SIZE, filtered);
         sum_triv += tic.toc();
 
         putc('.', stderr);
