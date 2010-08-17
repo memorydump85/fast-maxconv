@@ -185,3 +185,8 @@ private:
 #define DISC_KERNEL_5   4,   5,11,   7, 9,   9, 7,   11, 5
 #define DISC_KERNEL_6   5,   5,13,   7,11,   9, 9,   11, 7,   13, 5
 #define DISC_KERNEL_7   5,   5,15,   9,13,  11,11,   13, 9,   15, 5
+
+/*
+ * Donot define more: bigger kernel sizes might require more than 255 pixels.
+ * If you need bigger kernels, upgrade to histograms with 16-bit histograms
+ */
