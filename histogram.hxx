@@ -54,7 +54,7 @@ public:
 
     void merge(const Histogram& that)
     {
-#ifndef NSIMD
+#ifdef IMPLICIT_MMX
         for (int i=0; i<CBINS; ++i)
             m_vec.data[i] += that.m_vec.data[i];
 #else
@@ -66,7 +66,7 @@ public:
     
     void unmerge(const Histogram& that)
     {
-#ifndef NSIMD
+#ifdef IMPLICIT_MMX
         for (int i=0; i<CBINS; ++i)
             m_vec.data[i] -= that.m_vec.data[i];
 #else

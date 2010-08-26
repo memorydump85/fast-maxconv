@@ -45,7 +45,7 @@ static void convolveCenteredDisc2DMax(int a[], int width, int height, int radius
 int main()
 {
     const int SZ = 800;
-    const int SAMPLES = 500;
+    const int SAMPLES = 30;
     int* data = new int[SZ*SZ];
     int* filtered = new int[SZ*SZ];
 
