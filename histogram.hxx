@@ -36,7 +36,7 @@ class Histogram
 // Smaller number of bins do not improve performance because the cost is still
 // a single instruction. Larger bins linearly degrade performance
 {
-public:
+private:
     vector_storage<unsigned char> m_vec;
     mutable int m_max;
 

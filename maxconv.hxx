@@ -188,5 +188,5 @@ private:
 
 /*
  * Donot define more: bigger kernel sizes might require more than 255 pixels.
- * If you need bigger kernels, upgrade to histograms with 16-bit histograms
+ * If you need bigger kernels, upgrade to histograms with 16-bit buckets
  */
