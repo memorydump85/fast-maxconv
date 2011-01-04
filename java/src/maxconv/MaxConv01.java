@@ -1,6 +1,6 @@
 package maxconv;
 
-public class BinaryMaxConv
+public class MaxConv01
 {
     public static void main(String args[])
     {
