@@ -26,7 +26,7 @@ public class DilateGUI
     {
         jf.setLayout(new BorderLayout());
 
-        /* Combo box to allow algorithm selections */
+        /* Combo box to allow algorithm selection */
         jcb.addItem("Block");
         jcb.addItem("Quick Block");
         jcb.addItem("Binary Block");
@@ -135,6 +135,7 @@ public class DilateGUI
         new DilateGUI();
     }
 }
+
 
 class ImagePanel extends JPanel{
 

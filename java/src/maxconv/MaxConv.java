@@ -61,13 +61,13 @@ public class MaxConv
     public static int[] blockQuick(int[] im, int width, int height, int radius, int[] imout)
     {
         int dia = radius*2+1;
-        QuickConvolution.convolve(im, 0, width, width, height, dia, dia, imout);
+        HeapConvolve.convolve(im, 0, width, width, height, dia, dia, imout);
 
         return imout;
     }
 
     /**
-     * Binary dilation using a block(square) kernel
+     * Fast binary dilation using a block(square) kernel
      *
      * @param im
      *            input binary image
@@ -83,24 +83,10 @@ public class MaxConv
      */
     public static int[] blockBinary(int[] im, int width, int height, int radius, int[] imout)
     {
-        IntegralImage iim = new IntegralImage(width, height, im);
-
-        for (int j=0; j<height; ++j) {
-            for (int i=0; i<width; ++i) {
-                int xMin = Math.max(0, i-radius);
-                int xMax = Math.min(width-1, i+radius);
-                int yMin = Math.max(0, j-radius);
-                int yMax = Math.min(height-1, j+radius);
-
-                int sum = (int) iim.sum(xMin, yMin, xMax, yMax);
-                imout[width*j + i] = Math.max(imout[width*j + i], sum);
-            }
-        }
-
-        return imout;
+        return blockBinary(im, width, height, radius, radius, imout);
     }
 
-    public static int[] blockBinary(int[] im, int width, int height, int rH, int rW, int[] imout)
+    static int[] blockBinary(int[] im, int width, int height, int rH, int rW, int[] imout)
     {
         IntegralImage iim = new IntegralImage(width, height, im);
 
@@ -119,6 +105,21 @@ public class MaxConv
         return imout;
     }
 
+    /**
+     * Naive max-convolution/dilation using a disc kernel
+     *
+     * @param im
+     *            input gray-level image
+     * @param width
+     *            width of the input image
+     * @param height
+     *            height of the input image
+     * @param radius
+     *            radius of the disc kernel
+     * @param imout
+     *            gray-level image for storing the result
+     * @return resulting dilated image (same as the <code>imout</code> parameter)
+     */
     public static int[] disc(int[] im, int width, int height, int radius, int[] imout)
     {
         for (int p=-radius; p <= radius; p++) {
@@ -145,19 +146,35 @@ public class MaxConv
         return imout;
     }
 
+    /**
+     * Fast binary dilation using a disc kernel
+     *
+     * @param im
+     *            input binary image
+     * @param width
+     *            width of the input image
+     * @param height
+     *            height of the input image
+     * @param radius
+     *            radius of the disc kernel
+     * @param imout
+     *            binary image for storing the result
+     * @return resulting dilated image (same as the <code>imout</code> parameter)
+     */
     public static int[] discBinary(int[] im, int width, int height, int radius, int[] imout)
     {
         ArrayList<Dimension> rects = CircleCover.getRects(radius);
 
-        for (Dimension d : rects)
+        for (Dimension d : rects) {
             blockBinary(im, width, height, d.width/2, d.height/2, imout);
+        }
 
         return imout;
     }
 }
 
 
-class QuickConvolution
+class HeapConvolve
 {
     static final boolean isInBounds(int v, int vMax)
     {
