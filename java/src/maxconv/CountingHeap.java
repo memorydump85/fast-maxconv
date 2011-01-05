@@ -4,17 +4,21 @@ import java.util.*;
 
 
 /**
- * An efficient heap backed by a histogram. The values in
- * the heap must be between 0 and 255.
+ * An efficient heap backed by a histogram.
  */
 public class CountingHeap
 {
-    int[] bins = new int[256];
+    final int[] bins;
     int max = -1;
+
+    public CountingHeap(int nBins)
+    {
+        bins = new int[nBins];
+    }
 
     public void clear()
     {
-        Arrays.fill(bins, (byte)0);
+        Arrays.fill(bins, 0);
         max = -1;
     }
 

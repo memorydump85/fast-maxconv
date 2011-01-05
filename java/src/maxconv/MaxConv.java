@@ -187,14 +187,14 @@ class QuickConvolution
         CountingHeap colHeap[] = new CountingHeap[W];
 
         for (int n=0; n<colHeap.length; ++n)
-            colHeap[n] = new CountingHeap();
+            colHeap[n] = new CountingHeap(256);
 
         for (int y = 0; y < Q; ++y)
             for (int x = xstart; x < xend; ++x)
                 colHeap[x].add(in[y*W+x]);
 
         /* Initialize histogram */
-        CountingHeap heap = new CountingHeap();
+        CountingHeap heap = new CountingHeap(256);
 
 
         for (int y = 0; y < H; ++y) {
