@@ -37,7 +37,7 @@ public class DilateGUI
         jcb.addActionListener(listener);
         jf.add(jcb, BorderLayout.NORTH);
 
-        /* Random map  and image panel */
+        /* Random map and image panel */
         Random r = new Random();
         for (int i=0; i<map.length; ++i) {
             map[i] = r.nextDouble() > 0.999 ? 1 : 0;
