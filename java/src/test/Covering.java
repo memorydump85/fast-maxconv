@@ -9,6 +9,7 @@ import april.util.*;
 import april.vis.*;
 
 import maxconv.*;
+import maxconv.RectCovering.*;
 
 
 public class Covering
@@ -32,17 +33,18 @@ public class Covering
             public void parameterChanged(ParameterGUI pg, String name)
             {
                 VisDataGrid vdg = new VisDataGrid(-50*0.05, -50*0.05, 100, 100, 0.05, 0.05, false);
-                ArrayList<Dimension> rects = RectCovering.getForDisc(pg.gi("r"));
+                ArrayList<Offsets> rects = RectCovering.getForDisc(pg.gi("r"));
                 for (int i=rects.size()-1; i>=0; --i) {
-                    Dimension d = rects.get(i);
+                    Offsets off = rects.get(i);
                     final Color c = ColorUtil.setAlpha(Color.green.darker(), 32);
 
-                    for (int y=50-d.height/2; y<=50+d.height/2; ++y)
-                        for (int x=50-d.width/2; x<=50+d.width/2; ++x) {
+                    for (int y=50+off.top; y<=50+off.bottom; ++y)
+                        for (int x=50+off.left; x<=50+off.right; ++x) {
                             vdg.set(x, y, 0.01, Color.magenta);
                         }
 
-                    VisData vrect = new VisRectangle(d.width, d.height, new VisDataLineStyle(c, 2));
+                    VisData vrect = new VisRectangle(
+                            off.getHorizSpan(), off.getVertSpan(), new VisDataLineStyle(c, 2));
                     vrect.add(new VisDataFillStyle(c));
                     vb.addBuffered(vrect);
                 }

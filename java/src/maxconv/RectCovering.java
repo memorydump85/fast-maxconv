@@ -1,6 +1,5 @@
 package maxconv;
 
-import java.awt.*;
 import java.util.*;
 
 public class RectCovering
@@ -9,9 +8,9 @@ public class RectCovering
      * Returns a set of rectangles that cover a circle of given radius.
      * The circle is discretized using Bresenham's midpoint circle algorithm.
      */
-    public static ArrayList<Dimension> getForDisc(int radius)
+    public static ArrayList<Offsets> getForDisc(int radius)
     {
-        ArrayList<Dimension> rects = new ArrayList<Dimension>();
+        ArrayList<Offsets> rects = new ArrayList<Offsets>();
 
         int f = 1 - radius;
         int ddF_x = 1;
@@ -21,9 +20,9 @@ public class RectCovering
 
         while (x <= y) {
             if (f >= 0) {
-                rects.add(new Dimension(2*x+1, 2*y+1));
+                rects.add(new Offsets(-x, -y, x, y));
                 if (x!=y) {
-                    rects.add(new Dimension(2*y+1, 2*x+1));
+                    rects.add(new Offsets(-y, -x, y, x));
                 }
 
                 y--;
@@ -37,9 +36,6 @@ public class RectCovering
 
         return rects;
     }
-
-    /** Ratio of half side-length to radius for a regular octagon */
-    final static double RH_RATIO = 1 - 1.0/Math.sqrt(2);
 
     public static ArrayList<Offsets> getForOct(int radius)
     {
@@ -68,6 +64,16 @@ public class RectCovering
             this.top = t;
             this.right = r;
             this.bottom = b;
+        }
+
+        public int getHorizSpan()
+        {
+            return right - left + 1;
+        }
+
+        public int getVertSpan()
+        {
+            return bottom - top + 1;
         }
     }
 }

@@ -1,6 +1,5 @@
 package maxconv;
 
-import java.awt.*;
 import java.util.*;
 
 import maxconv.RectCovering.*;
@@ -167,10 +166,9 @@ public class MaxConv
      */
     public static int[] discBinary(int[] im, int width, int height, int radius, int[] imout)
     {
-        ArrayList<Dimension> rects = RectCovering.getForDisc(radius);
-
-        for (Dimension d : rects) {
-            blockBinary(im, width, height, d.width/2, d.height/2, imout);
+        ArrayList<Offsets> offs = RectCovering.getForDisc(radius);
+        for (Offsets off : offs) {
+            blockBinary(im, width, height, off.right, off.bottom, imout);
         }
 
         return imout;
