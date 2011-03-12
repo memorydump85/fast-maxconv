@@ -8,6 +8,8 @@ import java.util.*;
 import javax.swing.*;
 import javax.swing.event.*;
 
+import april.util.*;
+
 import maxconv.*;
 
 public class DilateGUI
@@ -33,6 +35,7 @@ public class DilateGUI
         jcb.addItem("--------------------");
         jcb.addItem("Disc");
         jcb.addItem("Binary Disc");
+        jcb.addItem("Binary Octagon");
 
         jcb.addActionListener(listener);
         jf.add(jcb, BorderLayout.NORTH);
@@ -40,7 +43,7 @@ public class DilateGUI
         /* Random map and image panel */
         Random r = new Random();
         for (int i=0; i<map.length; ++i) {
-            map[i] = r.nextDouble() > 0.999 ? 1 : 0;
+            map[i] = r.nextDouble() > 0.9999 ? 1 : 0;
         }
 
         jf.add(jimp, BorderLayout.CENTER);
@@ -104,6 +107,9 @@ public class DilateGUI
             case 5:
                 result = MaxConv.discBinary(map, SIZE, SIZE, js.getValue(), result);
                 break;
+            case 6:
+                result = MaxConv.octBinary(map, SIZE, SIZE, js.getValue(), result);
+                break;
             }
 
             long elapsed = System.currentTimeMillis() - start;
@@ -166,6 +172,6 @@ class ImagePanel extends JPanel{
         int x = this.getWidth()/2 - im.getWidth() / 2;
         int y = this.getHeight()/2 - im.getHeight() / 2;
 
-        g.drawImage(im, x, y, null);
+        g.drawImage(ImageUtil.scale(im, 1.0), x, y, null);
     }
 }

@@ -1,7 +1,8 @@
 package maxconv;
 
-import java.awt.*;
 import java.util.*;
+
+import maxconv.RectCovering.*;
 
 public class MaxConv
 {
@@ -106,7 +107,9 @@ public class MaxConv
     }
 
     /**
-     * Naive max-convolution/dilation using a disc kernel
+     * Naive max-convolution/dilation using a disc kernel. This algorithm produces
+     * circles that are different from circles obtained through Bresenham's midpoint
+     * circle algorithm
      *
      * @param im
      *            input gray-level image
@@ -163,14 +166,81 @@ public class MaxConv
      */
     public static int[] discBinary(int[] im, int width, int height, int radius, int[] imout)
     {
-        ArrayList<Dimension> rects = CircleCover.getRects(radius);
-
-        for (Dimension d : rects) {
-            blockBinary(im, width, height, d.width/2, d.height/2, imout);
+        ArrayList<Offsets> offs = RectCovering.getForDisc(radius);
+        for (Offsets off : offs) {
+            blockBinary(im, width, height, off.right, off.bottom, imout);
         }
 
         return imout;
     }
+
+    public static int[] octBinary(int[] im, int width, int height, int radius, int[] imout)
+    {
+        int[] rim = rotate45(im, width, height);
+
+        IntegralImage iim = new IntegralImage(width, height, im);
+        IntegralImage iimr = new IntegralImage(2*width, 2*height, rim);
+
+        ArrayList<Offsets> offs = RectCovering.getForOct(radius);
+        for (int n=0; n<2; ++n) {
+            Offsets f  = offs.get(n);
+            for (int j=0; j<height; ++j) {
+                for (int i=0; i<width; ++i) {
+                    final int x0 = i+f.left;
+                    final int y0 = j+f.top;
+                    final int x1 = i+f.right;
+                    final int y1 = j+f.bottom;
+
+                    int xMin = Math.max(0, x0);
+                    int yMin = Math.max(0, y0);
+                    int xMax = Math.min(width-1, x1);
+                    int yMax = Math.min(height-1, y1);
+                    int sum = (int) iim.sum(xMin, yMin, xMax, yMax);
+
+                    imout[width*j + i] = Math.max(imout[width*j + i], sum);
+                }
+            }
+        }
+
+        for (int n=2; n<4; ++n) {
+            Offsets f  = offs.get(n);
+            for (int j=0; j<height; ++j) {
+                for (int i=0; i<width; ++i) {
+                    final int x0 = i+f.left;
+                    final int y0 = j+f.top;
+                    final int x1 = i+f.right;
+                    final int y1 = j+f.bottom;
+
+                    int xr0 = width-y0+x0;
+                    int yr0 = x0+y0;
+                    int xr1 = width-y1+x1;
+                    int yr1 = x1+y1;
+
+                    int xMin = Math.max(0, xr0);
+                    int yMin = Math.max(0, yr0);
+                    int xMax = Math.min(2*width-1, xr1);
+                    int yMax = Math.min(2*height-1, yr1);
+                    int sum = (int) iimr.sum(xMin, yMin, xMax, yMax);
+
+                    imout[width*j + i] = Math.max(imout[width*j + i], sum);
+                }
+            }
+        }
+
+        return imout;
+    }
+
+    static int[] rotate45(int[] x, int W, int H)
+    {
+        int[] y = new int[(2*W)*(2*H)];
+
+        for(int j=0; j<H; ++j)
+            for (int i=0; i<W; ++i)
+                y[(i+j)*2*W + (W-j+i)] = x[j*W+i];
+
+        return y;
+    }
+
 }
 
 
